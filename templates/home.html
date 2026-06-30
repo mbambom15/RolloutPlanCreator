@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Roll Out Plan</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/home.css')}}">
+</head>
+
+<body>
+    <header>
+        <div class="header-left">
+            <span class="page-crumb">Nkanyezi</span>
+            <span class="sep">/</span>
+            <nav id="navbar">
+                <ul>
+                    <a href="#"><li>LMS</li></a>
+                    <a href="#feedback"><li>Feedback</li></a>
+                </ul>
+            </nav>
+        </div>
+ 
+        <div class="theme-switcher" role="group" aria-label="Choose colour theme">
+            <button class="tbtn active" data-theme="light" onclick="setTheme('light')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4.5"/>
+                    <line x1="12" y1="2" x2="12" y2="4"/>
+                    <line x1="12" y1="20" x2="12" y2="22"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="2" y1="12" x2="4" y2="12"/>
+                    <line x1="20" y1="12" x2="22" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                Light
+            </button>
+            <button class="tbtn" data-theme="dim" onclick="setTheme('dim')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+                Dim
+            </button>
+            <button class="tbtn" data-theme="dark" onclick="setTheme('dark')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+                Dark
+            </button>
+        </div>
+    </header>
+ 
+    <main>
+        <section class="page-hero">
+            <h1 class="hero-title">Rollout Plan Creator</h1>
+            <div class="hero-meta">
+                <span class="hero-tag">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <rect x="3" y="3" width="18" height="18" rx="2"/>
+                        <path d="M3 9h18M9 21V9"/>
+                    </svg>
+                    Nkanyezi LMS
+                </span>
+                <span class="hero-tag">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/>
+                        <circle cx="9" cy="7" r="4"/>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75"/>
+                    </svg>
+                    HospiTrack Information Systems
+                </span>
+            </div>
+        </section>
+ 
+        <hr class="divider">
+ 
+        <section id="new-plan">
+            <a href="create.html" class="new-plan-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+                </svg>
+                New rollout plan
+            </a>
+        </section>
+ 
+        <hr class="divider">
+ 
+        <section id="feedback">
+            <p class="section-eyebrow">Product Feedback</p>
+ 
+            <form>
+                <div class="form-intro">
+                    <h3>Customer Feedback Form</h3>
+                    <p>Thank you for taking the time to provide feedback. We appreciate hearing from you.</p>
+                </div>
+ 
+                <div class="field">
+                    <span class="field-label">Would you recommend this to your friends and colleagues?</span>
+                    <div class="check-row">
+                        <label class="check-opt">
+                            <input type="checkbox" id="yes" name="recommend" value="Yes">
+                            <span>Yes</span>
+                        </label>
+                        <label class="check-opt">
+                            <input type="checkbox" id="no" name="recommend" value="No">
+                            <span>No</span>
+                        </label>
+                    </div>
+                </div>
+ 
+                <div class="field">
+                    <label class="field-label" for="suggestions">Do you have any suggestions to improve our product and service?</label>
+                    <textarea id="suggestions" rows="5" placeholder="Type your suggestions here…"></textarea>
+                </div>
+ 
+                <div class="field">
+                    <label class="field-label" for="review">How satisfied are you with the application?</label>
+                    <select name="review" id="review">
+                        <option>1 – Poor</option>
+                        <option>2 – Somewhat acceptable</option>
+                        <option>3 – Neutral</option>
+                        <option>4 – Good</option>
+                        <option>5 – Excellent</option>
+                    </select>
+                </div>
+ 
+                <div class="field">
+                    <div class="callout">
+                        Leave your contact details below if you'd like us to follow up with you regarding any questions.
+                    </div>
+ 
+                    <div class="input-grid" style="margin-top: 12px;">
+                        <div class="sub-field">
+                            <label class="field-label" for="name">First name</label>
+                            <input type="text" id="name" placeholder="Nhlakanipho">
+                        </div>
+                        <div class="sub-field">
+                            <label class="field-label" for="surname">Last name</label>
+                            <input type="text" id="surname" placeholder="Mbambo">
+                        </div>
+                    </div>
+ 
+                    <div class="sub-field" style="margin-top: 12px;">
+                        <label class="field-label" for="email">Email address</label>
+                        <input type="email" id="email" placeholder="mbambo15@gmail.com">
+                    </div>
+                </div>
+ 
+                <input type="submit" value="Submit feedback">
+            </form>
+        </section>
+    </main>
+ 
+    <footer>
+        <ul>
+            <a href="privacy.html"><li>Privacy Policy</li></a>
+        </ul>
+        <p>HospiTrack Information Systems &copy; 2026</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/home.js') }}"></script>
+</body>
+
+</html>

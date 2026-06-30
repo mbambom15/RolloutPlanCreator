@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>Privacy Policy — Nkanyezi Academy</title>
+    <link rel="stylesheet" href="attendance.css">
+    <style>
+        /* ── Privacy-page-only additions, layered on top of attendance.css ── */
+        main.policy-main {
+            max-width: 760px;
+            margin: 0 auto;
+            padding: 0 1.25rem 4rem;
+        }
+
+        .policy-hero {
+            padding: 2.5rem 0 1.5rem;
+            border-bottom: 1px solid rgba(148, 163, 184, 0.2);
+            margin-bottom: 2rem;
+        }
+
+        .policy-eyebrow {
+            font-size: 0.75rem;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: #10b981;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+        }
+
+        .policy-hero h1 {
+            font-size: 1.85rem;
+            margin: 0 0 0.5rem;
+            line-height: 1.2;
+        }
+
+        .policy-meta {
+            font-size: 0.85rem;
+            color: #64748b;
+        }
+
+        .policy-section {
+            margin-bottom: 2.25rem;
+        }
+
+        .policy-section h2 {
+            font-size: 1.15rem;
+            display: flex;
+            align-items: baseline;
+            gap: 0.6rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .policy-section h2 .sec-num {
+            font-size: 0.8rem;
+            color: #64748b;
+            font-weight: 500;
+        }
+
+        .policy-section p,
+        .policy-section li {
+            font-size: 0.95rem;
+            line-height: 1.65;
+            color: #334155;
+        }
+
+        .policy-section ul {
+            padding-left: 1.1rem;
+            margin: 0.75rem 0;
+        }
+
+        .policy-section li {
+            margin-bottom: 0.45rem;
+        }
+
+        /* Data inventory cards — echoes .stats-grid / .stat-card from the app */
+        .data-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 0.85rem;
+            margin: 1rem 0 1.25rem;
+        }
+
+        .data-card {
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 10px;
+            padding: 0.9rem 1rem;
+            background: rgba(148, 163, 184, 0.04);
+        }
+
+        .data-card .dc-label {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            color: #64748b;
+            margin-bottom: 0.3rem;
+        }
+
+        .data-card .dc-value {
+            font-size: 0.88rem;
+            color: #1e293b;
+            line-height: 1.45;
+        }
+
+        .policy-callout {
+            border-left: 3px solid #10b981;
+            padding: 0.75rem 1rem;
+            background: rgba(16, 185, 129, 0.06);
+            border-radius: 0 8px 8px 0;
+            font-size: 0.9rem;
+            color: #334155;
+            margin: 1rem 0;
+        }
+
+        .policy-callout strong {
+            color: #1e293b;
+        }
+
+        .contact-card {
+            border: 1px solid rgba(148, 163, 184, 0.25);
+            border-radius: 10px;
+            padding: 1.25rem;
+            text-align: left;
+        }
+
+        .contact-card .dc-value a {
+            color: #10b981;
+            text-decoration: none;
+        }
+
+        .contact-card .dc-value a:hover {
+            text-decoration: underline;
+        }
+
+        .toc {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem 1rem;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 2rem;
+            font-size: 0.85rem;
+        }
+
+        .toc li a {
+            color: #64748b;
+            text-decoration: none;
+            border-bottom: 1px dotted rgba(148, 163, 184, 0.5);
+        }
+
+        .toc li a:hover {
+            color: #10b981;
+        }
+
+        @media (max-width: 640px) {
+            .policy-hero h1 { font-size: 1.5rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <nav id="nav-header">
+            <ul>
+                <li>Nkanyezi Academy</li>
+                <li><a href="/" style="color:inherit;text-decoration:none;">← Back to Nkanyezi LMS</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="policy-main">
+
+        <div class="policy-hero">
+            <div class="policy-eyebrow">Privacy &amp; Data Protection</div>
+            <h1>Privacy Policy</h1>
+            <div class="policy-meta">Effective date: 29 June 2026 · Applies to all users of the Nkanyezi LMS platform</div>
+        </div>
+
+        <ul class="toc">
+            <li><a href="#who-we-are">1. Who we are</a></li>
+            <li><a href="#what-we-collect">2. What we collect</a></li>
+            <li><a href="#why-we-collect">3. Why we collect it</a></li>
+            <li><a href="#geolocation">4. Geolocation specifically</a></li>
+            <li><a href="#legal-basis">5. Our legal basis (POPIA)</a></li>
+            <li><a href="#sharing">6. Who we share data with</a></li>
+            <li><a href="#retention">7. How long we keep it</a></li>
+            <li><a href="#security">8. How we protect it</a></li>
+            <li><a href="#your-rights">9. Your rights</a></li>
+            <li><a href="#cookies">10. Cookies &amp; sessions</a></li>
+            <li><a href="#children">11. Minors</a></li>
+            <li><a href="#changes">12. Changes to this policy</a></li>
+            <li><a href="#contact">13. Contact us</a></li>
+        </ul>
+
+        <section class="policy-section" id="who-we-are">
+            <h2><span class="sec-num">01</span> Who we are</h2>
+            <p>
+                Nkanyezi Academy ("Nkanyezi", "we", "us") operates the Nkanyezi LMS — the learning
+                and attendance management platform used by learners, facilitators, assessors, and
+                administrators participating in SETA-accredited learnership programmes. This policy
+                explains what personal information we collect through the platform, why we collect
+                it, and the rights you have over it under the Protection of Personal Information Act
+                4 of 2013 (POPIA).
+            </p>
+            <p>
+                This policy applies to anyone using Nkanyezi LMS, including the web attendance
+                tracker, the learner and facilitator dashboards, and the admin portal.
+            </p>
+        </section>
+
+        <section class="policy-section" id="what-we-collect">
+            <h2><span class="sec-num">02</span> What we collect</h2>
+            <p>We collect only what's needed to run the learnership programme and meet SETA reporting obligations:</p>
+            <div class="data-grid">
+                <div class="data-card">
+                    <div class="dc-label">Identity</div>
+                    <div class="dc-value">Full name, surname, SA ID number, gender, contact number, email address</div>
+                </div>
+                <div class="data-card">
+                    <div class="dc-label">Programme data</div>
+                    <div class="dc-value">Qualification, enrolment dates, progress, unit completion, assessment scores and feedback</div>
+                </div>
+                <div class="data-card">
+                    <div class="dc-label">Attendance &amp; location</div>
+                    <div class="dc-value">Sign-in/sign-out timestamps, GPS coordinates at the moment of signing in or out, distance from the registered venue</div>
+                </div>
+                <div class="data-card">
+                    <div class="dc-label">Account &amp; usage</div>
+                    <div class="dc-value">Login sessions, role and permissions, material views, uploaded documents</div>
+                </div>
+            </div>
+            <p>
+                We do not collect financial information, biometric data, or any information from your
+                device beyond what's listed above. Location is only ever read at the moment you tap
+                Sign in or Sign out — we do not track your location in the background or at any other time.
+            </p>
+        </section>
+
+        <section class="policy-section" id="why-we-collect">
+            <h2><span class="sec-num">03</span> Why we collect it</h2>
+            <ul>
+                <li><strong>To run the learnership:</strong> enrolling you on the correct qualification, tracking your progress, and recording assessment results.</li>
+                <li><strong>To verify attendance:</strong> SETA-accredited learnerships require proof that learners were physically present at the training venue. Sign-in/out times and GPS verification exist to satisfy this requirement.</li>
+                <li><strong>For SETA audit and compliance:</strong> attendance and enrolment records form part of the audit trail SETAs require to validate the programme.</li>
+                <li><strong>To support you:</strong> facilitators and assessors use your progress and attendance data to flag if you may be falling behind or at risk, so support can be offered early.</li>
+                <li><strong>To administer accounts:</strong> login, role-based access, and basic platform security.</li>
+            </ul>
+        </section>
+
+        <section class="policy-section" id="geolocation">
+            <h2><span class="sec-num">04</span> Geolocation specifically</h2>
+            <p>
+                Because geolocation is the most sensitive data point we collect, here's exactly how it works:
+            </p>
+            <ul>
+                <li>Your browser asks your permission before any location is read. You can decline — attendance simply can't be recorded electronically without it.</li>
+                <li>Location is captured only at the instant you sign in or sign out. There is no continuous or background tracking.</li>
+                <li>We compare your coordinates against the registered training venue to confirm you were within range. If you're outside that range, your attendance is still recorded, but flagged as unverified rather than rejected outright.</li>
+                <li>Raw coordinates are stored against your attendance record (for audit purposes) but are only ever shown to you, and to authorised facilitators/assessors/admins, rounded to a low-precision approximation in the interface.</li>
+            </ul>
+        </section>
+
+        <section class="policy-section" id="legal-basis">
+            <h2><span class="sec-num">05</span> Our legal basis (POPIA)</h2>
+            <p>
+                Under POPIA, we process your personal information on the following grounds:
+            </p>
+            <ul>
+                <li><strong>Performance of a contract:</strong> your enrolment in the learnership programme requires us to process your details to deliver it.</li>
+                <li><strong>Legal obligation:</strong> SETAs and related legislation require accurate attendance and enrolment records to be kept.</li>
+                <li><strong>Legitimate interest:</strong> identifying at-risk learners early so support can be offered, and maintaining platform security.</li>
+                <li><strong>Consent:</strong> specifically for geolocation, which your device only shares once you've actively granted browser permission.</li>
+            </ul>
+        </section>
+
+        <section class="policy-section" id="sharing">
+            <h2><span class="sec-num">06</span> Who we share data with</h2>
+            <p>We don't sell personal information. It may be shared, strictly on a need-to-know basis, with:</p>
+            <ul>
+                <li>The host employer and SETA associated with your learnership, where required for accreditation, funding, or audit purposes.</li>
+                <li>Facilitators and assessors assigned to your qualification, limited to what they need to support and assess you.</li>
+                <li>Service providers who help us run the platform (for example, cloud hosting and file storage), who are contractually required to protect your data and use it only to provide that service.</li>
+                <li>Regulators or legal authorities, only where we're legally required to disclose information.</li>
+            </ul>
+        </section>
+
+        <section class="policy-section" id="retention">
+            <h2><span class="sec-num">07</span> How long we keep it</h2>
+            <p>
+                Attendance and enrolment records are retained for as long as required by SETA audit
+                rules, even after a learner exits the programme or their account is deactivated. When
+                an account is removed by an administrator, the underlying record is archived rather
+                than deleted, so the audit trail stays intact — this is standard practice for
+                accredited learnerships and is not optional. Outside of that audit requirement, we
+                don't keep personal information longer than necessary for the purposes described in
+                this policy.
+            </p>
+        </section>
+
+        <section class="policy-section" id="security">
+            <h2><span class="sec-num">08</span> How we protect it</h2>
+            <ul>
+                <li>Passwords are hashed and never stored or visible in plain text.</li>
+                <li>Access to learner, facilitator, and admin data is restricted by role — facilitators don't see admin-only data, and learners only see their own records.</li>
+                <li>Session authentication uses secure, HTTP-only cookies, and sensitive endpoints are rate-limited to reduce the risk of abuse.</li>
+                <li>Uploaded materials and documents are stored using access-controlled cloud storage rather than public links.</li>
+            </ul>
+            <div class="policy-callout">
+                No system is completely risk-free. If you believe your account has been compromised,
+                contact us immediately using the details in section 13.
+            </div>
+        </section>
+
+        <section class="policy-section" id="your-rights">
+            <h2><span class="sec-num">09</span> Your rights</h2>
+            <p>Under POPIA, you have the right to:</p>
+            <ul>
+                <li>Ask us to confirm what personal information we hold about you, and request a copy of it.</li>
+                <li>Ask us to correct information that is inaccurate, outdated, or incomplete.</li>
+                <li>Object to processing that relies on legitimate interest, on reasonable grounds.</li>
+                <li>Withdraw consent for geolocation at any time — by declining or revoking browser location permission — understanding this means attendance can't be recorded electronically for you.</li>
+                <li>Lodge a complaint with the Information Regulator of South Africa if you believe your information has been mishandled.</li>
+            </ul>
+            <p>
+                Requests relating to enrolment, attendance, or SETA audit records may take longer to
+                action where retention is a legal requirement rather than a choice we control.
+            </p>
+        </section>
+
+        <section class="policy-section" id="cookies">
+            <h2><span class="sec-num">10</span> Cookies &amp; sessions</h2>
+            <p>
+                Nkanyezi LMS uses a single essential session cookie to keep you logged in securely.
+                It does not set marketing, advertising, or third-party tracking cookies.
+            </p>
+        </section>
+
+        <section class="policy-section" id="children">
+            <h2><span class="sec-num">11</span> Minors</h2>
+            <p>
+                Nkanyezi LMS is intended for learners enrolled in accredited learnership programmes.
+                Where a learner is under 18, processing is carried out in line with the consent and
+                oversight requirements of the relevant learnership agreement and POPIA.
+            </p>
+        </section>
+
+        <section class="policy-section" id="changes">
+            <h2><span class="sec-num">12</span> Changes to this policy</h2>
+            <p>
+                We may update this policy as the platform evolves. Material changes will be reflected
+                with an updated effective date at the top of this page. Continued use of Nkanyezi LMS
+                after changes take effect constitutes acceptance of the revised policy.
+            </p>
+        </section>
+
+        <section class="policy-section" id="contact">
+            <h2><span class="sec-num">13</span> Contact us</h2>
+            <p>
+                For any question about this policy, or to exercise any of the rights listed above,
+                contact our Information Officer:
+            </p>
+            <div class="contact-card">
+                <div class="dc-label">Email</div>
+                <div class="dc-value"><a href="mailto:privacy@nkanyezi.co.za">privacy@nkanyezi.co.za</a></div>
+                <div style="height:0.6rem"></div>
+                <div class="dc-label">Postal / programme enquiries</div>
+                <div class="dc-value">Via your assigned facilitator or the Nkanyezi LMS admin team.</div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer>
+        Nkanyezi LMS 2026 · Privacy Policy
+    </footer>
+
+</body>
+</html>
