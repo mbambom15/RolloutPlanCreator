@@ -1,0 +1,411 @@
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+ 
+        :root {
+            --bg:           #FFFFFF;
+            --bg-2:         #F7F7F5;
+            --bg-hover:     #EFEFED;
+            --nav-bg:       #FBFBFA;
+            --text:         #37352F;
+            --text-2:       #787774;
+            --text-3:       #ACABA8;
+            --border:       #E9E9E7;
+            --border-2:     #D3D1CB;
+            --accent:       #2383E2;
+            --accent-bg:    #EBF3FB;
+            --accent-2:     #0F73D9;
+            --t: 180ms ease;
+        }
+ 
+        [data-theme="dim"] {
+            --bg:           #2F3437;
+            --bg-2:         #373C3F;
+            --bg-hover:     #3F4549;
+            --nav-bg:       #272B2E;
+            --text:         #CFCFCF;
+            --text-2:       #9B9B9B;
+            --text-3:       #717171;
+            --border:       #4A4F52;
+            --border-2:     #5A5F62;
+            --accent:       #529CCA;
+            --accent-bg:    rgba(82,156,202,0.12);
+            --accent-2:     #6AAFE0;
+        }
+ 
+        [data-theme="dark"] {
+            --bg:           #191919;
+            --bg-2:         #1F1F1F;
+            --bg-hover:     #2A2A2A;
+            --nav-bg:       #111111;
+            --text:         #E6E6E4;
+            --text-2:       #9B9A97;
+            --text-3:       #64635F;
+            --border:       #2F2F2F;
+            --border-2:     #3F3F3F;
+            --accent:       #529CCA;
+            --accent-bg:    rgba(82,156,202,0.15);
+            --accent-2:     #6AAFE0;
+        }
+ 
+        html { transition: background-color var(--t), color var(--t); }
+ 
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 15px;
+            line-height: 1.6;
+            min-height: 100vh;
+            transition: background-color var(--t), color var(--t);
+        }
+ 
+        /* ── HEADER ── */
+        header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: var(--nav-bg);
+            border-bottom: 1px solid var(--border);
+            height: 48px;
+            padding: 0 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: background-color var(--t), border-color var(--t);
+        }
+ 
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+ 
+        .page-crumb {
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--text);
+            white-space: nowrap;
+        }
+ 
+        .sep {
+            font-size: 16px;
+            color: var(--text-3);
+            user-select: none;
+        }
+ 
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 2px;
+            align-items: center;
+        }
+ 
+        nav ul a { text-decoration: none; }
+ 
+        nav ul li {
+            font-size: 13px;
+            color: var(--text-2);
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background var(--t), color var(--t);
+        }
+ 
+        nav ul li:hover {
+            background: var(--bg-hover);
+            color: var(--text);
+        }
+ 
+        /* ── THEME SWITCHER ── */
+        .theme-switcher {
+            display: flex;
+            align-items: center;
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 3px;
+            gap: 1px;
+        }
+ 
+        .tbtn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 4px 11px;
+            border-radius: 16px;
+            font-family: inherit;
+            font-size: 12px;
+            font-weight: 500;
+            color: var(--text-2);
+            transition: all var(--t);
+            white-space: nowrap;
+        }
+ 
+        .tbtn svg { width: 12px; height: 12px; flex-shrink: 0; }
+        .tbtn:hover { color: var(--text); }
+ 
+        .tbtn.active {
+            background: var(--bg);
+            color: var(--text);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+        }
+
+/* ── FOOTER ── */
+        footer {
+            border-top: 1px solid var(--border);
+            padding: 20px 48px;
+            max-width: 720px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            transition: border-color var(--t);
+        }
+ 
+        footer ul { list-style: none; }
+        footer a { text-decoration: none; }
+ 
+        footer li {
+            font-size: 12px;
+            color: var(--text-2);
+            cursor: pointer;
+            transition: color var(--t);
+        }
+ 
+        footer li:hover {
+            color: var(--text);
+            text-decoration: underline;
+        }
+ 
+        footer p { font-size: 12px; color: var(--text-3); }
+ 
+        /* ── RESPONSIVE ── */
+        @media (max-width: 640px) {
+            main { padding: 40px 20px 60px; }
+            footer { padding: 20px; flex-direction: column; gap: 10px; text-align: center; }
+            .hero-title { font-size: 28px; }
+            .input-grid { grid-template-columns: 1fr; }
+            .header-left nav { display: none; }
+        }
+ 
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after { transition: none !important; }
+        }
+        /* ── MAIN LAYOUT ── */
+        main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 56px 48px 100px;
+        }
+
+        .page-hero { margin-bottom: 40px; }
+
+        .hero-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--text);
+            letter-spacing: -0.03em;
+            line-height: 1.2;
+            margin-bottom: 8px;
+        }
+
+        .hero-sub { font-size: 14px; color: var(--text-2); }
+
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 32px 0;
+            transition: border-color var(--t);
+        }
+
+        /* ── STAGE SECTIONS ── */
+        section.stage h2 {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 13px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+            color: var(--text-3);
+            margin-bottom: 18px;
+        }
+
+        .stage-badge {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: .04em;
+            color: #fff;
+            background: var(--accent);
+            padding: 3px 8px;
+            border-radius: 10px;
+            text-transform: none;
+        }
+
+        .sub-heading {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        /* ── FORM ELEMENTS ── */
+        .field { display: flex; flex-direction: column; gap: 8px; }
+        .field-label { font-size: 13px; font-weight: 500; color: var(--text); display:block; }
+        .input-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        .sub-field { display: flex; flex-direction: column; gap: 6px; }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"] {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 5px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 14px;
+            padding: 9px 12px;
+            width: 100%;
+            outline: none;
+            transition: border-color var(--t), box-shadow var(--t), background-color var(--t);
+        }
+
+        input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 2px var(--accent-bg);
+        }
+
+        input::placeholder { color: var(--text-3); }
+
+        /* ── CALLOUT ── */
+        .callout {
+            background: var(--bg-2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 12px 14px;
+            font-size: 12.5px;
+            color: var(--text-2);
+            line-height: 1.55;
+            transition: background-color var(--t), border-color var(--t);
+        }
+
+        /* ── BUTTONS ── */
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: var(--accent);
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            font-family: inherit;
+            font-size: 13px;
+            font-weight: 500;
+            padding: 9px 16px;
+            cursor: pointer;
+            transition: background var(--t), transform 80ms;
+        }
+        .btn:hover { background: var(--accent-2); }
+        .btn:active { transform: scale(0.98); }
+
+        .btn.secondary {
+            background: var(--bg-2);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+        .btn.secondary:hover { background: var(--bg-hover); border-color: var(--border-2); }
+
+        .btn.ghost {
+            background: none;
+            border: none;
+            color: #B23B2E;
+            padding: 4px 8px;
+            font-size: 16px;
+            line-height: 1;
+            cursor: pointer;
+        }
+
+        .row-actions { display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; }
+
+        /* ── TABLE ── */
+        table { width: 100%; border-collapse: collapse; font-size: 13px; }
+        th {
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: .05em;
+            color: var(--text-3);
+            padding: 9px 10px;
+            border-bottom: 1px solid var(--border-2);
+            white-space: nowrap;
+        }
+        td {
+            padding: 8px 10px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: middle;
+            color: var(--text);
+        }
+        td input { padding: 6px 8px; font-size: 13px; }
+        tbody tr:hover td { background: var(--bg-2); }
+        .num { text-align: right; font-variant-numeric: tabular-nums; }
+
+        /* ── DAY PICKER (Stage 2 only) ── */
+        .daypicker { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; }
+        .daychip {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 7px 12px;
+            border: 1px solid var(--border);
+            background: var(--bg);
+            border-radius: 16px;
+            font-size: 12.5px;
+            cursor: pointer;
+            user-select: none;
+            color: var(--text-2);
+            transition: all var(--t);
+        }
+        .daychip input { accent-color: var(--accent); margin: 0; }
+        .daychip.checked { background: var(--accent-bg); border-color: var(--accent); color: var(--text); }
+
+        /* ── SUMMARY CARDS ── */
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 1px;
+            background: var(--border);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .summary-cell { background: var(--bg); padding: 16px; }
+        .summary-cell .label {
+            font-size: 10.5px;
+            text-transform: uppercase;
+            letter-spacing: .06em;
+            color: var(--text-3);
+            margin-bottom: 6px;
+        }
+        .summary-cell .value { font-size: 20px; font-weight: 600; color: var(--text); }
+        .summary-cell.flag-good .value { color: #2E7D5B; }
+
+        /* ── EMPTY STATE ── */
+        .empty {
+            padding: 22px;
+            text-align: center;
+            color: var(--text-3);
+            font-size: 12.5px;
+            border: 1px dashed var(--border);
+            border-radius: 6px;
+        }
+
+        .module-block { margin-bottom: 22px; }
+
+        @media (max-width: 720px) {
+            main { padding: 40px 20px 60px; }
+            .input-grid { grid-template-columns: 1fr; }
+            .summary-grid { grid-template-columns: 1fr 1fr; }
+        }

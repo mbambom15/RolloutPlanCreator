@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+    @page { size: A4; margin: 20mm 16mm; }
+    * { box-sizing: border-box; }
+    body {
+        font-family: 'Inter', Helvetica, Arial, sans-serif;
+        color: #37352F;
+        font-size: 11px;
+        line-height: 1.5;
+        margin: 0;
+    }
+    h1 { font-size: 22px; font-weight: 700; margin: 0 0 4px; letter-spacing: -0.02em; }
+    .sub { font-size: 11px; color: #787774; margin-bottom: 2px; }
+    .meta { font-size: 10px; color: #ACABA8; margin-bottom: 20px; }
+    h2 {
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: .06em;
+        color: #37352F;
+        margin: 24px 0 10px;
+        padding-bottom: 6px;
+        border-bottom: 1px solid #E9E9E7;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 10px; margin-bottom: 6px; }
+    th {
+        text-align: left;
+        font-size: 9px;
+        text-transform: uppercase;
+        letter-spacing: .04em;
+        color: #787774;
+        padding: 6px 8px;
+        border-bottom: 1.5px solid #37352F;
+        background: #F7F7F5;
+    }
+    td { padding: 6px 8px; border-bottom: 1px solid #E9E9E7; }
+    .num { text-align: right; }
+    .summary-grid { display: flex; flex-wrap: wrap; border: 1px solid #E9E9E7; margin-bottom: 6px; }
+    .summary-cell { width: 25%; padding: 10px 12px; border-right: 1px solid #E9E9E7; border-bottom: 1px solid #E9E9E7; }
+    .summary-cell .label { font-size: 8.5px; text-transform: uppercase; letter-spacing: .05em; color: #ACABA8; margin-bottom: 4px; }
+    .summary-cell .value { font-size: 15px; font-weight: 600; color: #37352F; }
+    .module-block { margin-bottom: 16px; page-break-inside: avoid; }
+    .module-title { font-size: 12px; font-weight: 600; margin-bottom: 4px; }
+    .module-meta { font-size: 9.5px; color: #787774; margin-bottom: 6px; }
+    .doc-footer { margin-top: 28px; font-size: 9px; color: #ACABA8; border-top: 1px solid #E9E9E7; padding-top: 8px; }
+</style>
+</head>
+<body>
+    <h1>{{ cohort_name }}</h1>
+    <div class="sub">Nkanyezi Academy &middot; Roll-out Plan</div>
+    <div class="meta">
+        {% if induction_date %}Induction: {{ induction_date }} &nbsp;&middot;&nbsp; {% endif %}
+        {% if start_date %}Programme Start: {{ start_date }}{% endif %}
+        {% if exam_date %} &nbsp;&middot;&nbsp; Exam Deadline: {{ exam_date }}{% endif %}
+    </div>
+
+    {% if modules %}
+    <h2>Computed Schedule</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th><th>Module</th><th class="num">Credits</th><th class="num">Notional Hrs</th>
+                <th class="num">% of Programme</th><th class="num">Allocated Days</th><th>Start</th><th>End</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for m in modules %}
+            <tr>
+                <td class="num">{{ loop.index }}</td>
+                <td>{{ m.name }}</td>
+                <td class="num">{{ m.credits }}</td>
+                <td class="num">{{ m.notionalHours }}</td>
+                <td class="num">{{ '%.1f'|format(m.pct or 0) }}%</td>
+                <td class="num">{{ m.days }}</td>
+                <td>{{ m.start or '—' }}</td>
+                <td>{{ m.end or '—' }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    {% if summary %}
+    <h2>Programme Summary</h2>
+    <div class="summary-grid">
+        <div class="summary-cell"><div class="label">Total Credits</div><div class="value">{{ summary.totalCredits }}</div></div>
+        <div class="summary-cell"><div class="label">Available Business Days</div><div class="value">{{ summary.availableBusinessDays }}</div></div>
+        <div class="summary-cell"><div class="label">Allocated Business Days</div><div class="value">{{ summary.totalAllocatedDays }}</div></div>
+        <div class="summary-cell"><div class="label">Utilisation</div><div class="value">{{ '%.1f'|format(summary.utilisation or 0) }}%</div></div>
+        <div class="summary-cell" style="width:100%; border-right:none;"><div class="label">Average Days per Credit</div><div class="value">{{ '%.2f'|format(summary.avgDaysPerCredit or 0) }}</div></div>
+    </div>
+    {% endif %}
+
+    {% if sessions %}
+    <h2>Session Plan</h2>
+    {% for mod in sessions %}
+        {% if mod.rows %}
+        <div class="module-block">
+            <div class="module-title">{{ mod.name }}</div>
+            <div class="module-meta">{{ mod.start }} &ndash; {{ mod.end }} &middot; {{ mod.rows|length }} session(s)</div>
+            <table>
+                <thead><tr><th style="width:36px;">#</th><th>Session Date</th><th>Day</th></tr></thead>
+                <tbody>
+                {% for row in mod.rows %}
+                    <tr><td class="num">{{ row.n }}</td><td>{{ row.date }}</td><td>{{ row.day }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% endif %}
+    {% endfor %}
+    {% endif %}
+
+    <div class="doc-footer">Generated {{ generated_on }} &middot; Nkanyezi Academy Roll-out Plan Builder</div>
+</body>
+</html>

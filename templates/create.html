@@ -3,9 +3,174 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creation</title>
+    <title>New Roll-out Plan</title>
+    <link rel="stylesheet" href="{{url_for('static', filename='css/create.css')}}">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
 <body>
-    <footer></footer>
+    <header>
+        <div class="header-left">
+            <span class="page-crumb">Nkanyezi</span>
+            <span class="sep">/</span>
+            <nav id="navbar">
+                <ul>
+                    <a href="#"><li>LMS</li></a>
+                    <a href="#feedback"><li>Feedback</li></a>
+                </ul>
+            </nav>
+        </div>
+
+        <div class="theme-switcher" role="group" aria-label="Choose colour theme">
+            <button class="tbtn active" data-theme="light" onclick="setTheme('light')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="4.5"/>
+                    <line x1="12" y1="2" x2="12" y2="4"/>
+                    <line x1="12" y1="20" x2="12" y2="22"/>
+                    <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/>
+                    <line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+                    <line x1="2" y1="12" x2="4" y2="12"/>
+                    <line x1="20" y1="12" x2="22" y2="12"/>
+                    <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/>
+                    <line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+                </svg>
+                Light
+            </button>
+            <button class="tbtn" data-theme="dim" onclick="setTheme('dim')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <circle cx="12" cy="12" r="5"/>
+                    <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/>
+                </svg>
+                Dim
+            </button>
+            <button class="tbtn" data-theme="dark" onclick="setTheme('dark')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+                </svg>
+                Dark
+            </button>
+        </div>
+    </header>
+
+    <main>
+        <section class="page-hero">
+            <h1 class="hero-title">New Roll-out Plan</h1>
+            <p class="hero-sub">Build the 12-month programme window in Stage 1, then generate the actual session dates learners attend in Stage 2.</p>
+        </section>
+
+        <hr class="divider">
+
+        <section class="stage" id="stage1">
+            <h2><span class="stage-badge">Stage 1</span> Roll-out Plan</h2>
+
+            <div class="field">
+                <div class="input-grid">
+                    <div class="sub-field">
+                        <label class="field-label" for="cohortName">Cohort / Deal Name</label>
+                        <input type="text" id="cohortName" placeholder="e.g. Frangipani Software Engineer SE6">
+                    </div>
+                    <div class="sub-field">
+                        <label class="field-label" for="startDate">Programme Start Date</label>
+                        <input type="date" id="startDate">
+                    </div>
+                </div>
+            </div>
+
+            <div class="callout" style="margin-top:16px;">
+                The programme window runs exactly 12 months from the start date. Available business
+                days are divided among modules proportionally to their credit weighting — the final
+                module always lands exactly on the exam deadline.
+            </div>
+
+            <div style="margin-top:24px;">
+                <table id="moduleTable">
+                    <thead>
+                        <tr>
+                            <th style="width:40px;">#</th>
+                            <th>Module / Unit Standard Name</th>
+                            <th style="width:110px;">Credits</th>
+                            <th style="width:40px;"></th>
+                        </tr>
+                    </thead>
+                    <tbody id="moduleBody"></tbody>
+                </table>
+                <div class="row-actions">
+                    <button class="btn secondary" type="button" onclick="addModuleRow()">+ Add Module</button>
+                    <button class="btn" type="button" onclick="computeSchedule()">Calculate Roll-out Plan</button>
+                    <button class="btn secondary" type="button" onclick="clearAll()">Clear All</button>
+                </div>
+
+                <div class="callout" style="margin-top:16px; display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap;">
+                    <span>Or upload an existing roll-out plan (.xlsx) — module names and credits are detected automatically for you to check before calculating.</span>
+                    <label class="btn secondary" for="fileInput" style="cursor:pointer;">Upload .xlsx</label>
+                    <input type="file" id="fileInput" accept=".xlsx,.xls" style="display:none;" onchange="handleUpload(event)">
+                </div>
+            </div>
+
+            <div style="margin-top:30px;">
+                <h3 class="sub-heading">Computed Schedule</h3>
+                <div id="scheduleArea">
+                    <div class="empty">No schedule yet — add modules above and click "Calculate Roll-out Plan".</div>
+                </div>
+            </div>
+
+            <div style="margin-top:30px;">
+                <h3 class="sub-heading">Programme Summary</h3>
+                <div id="summaryArea">
+                    <div class="empty">Summary will appear once a schedule is calculated.</div>
+                </div>
+            </div>
+        </section>
+
+        <hr class="divider">
+
+        <section class="stage" id="stage2">
+            <h2><span class="stage-badge">Stage 2</span> Session Planner</h2>
+
+            <div class="callout">
+                Choose which weekday(s) learners actually attend — this generates specific session
+                dates within each module's date range from Stage 1, independently of how that range
+                was calculated.
+            </div>
+
+            <div style="margin-top:16px;">
+                <label class="field-label">Quick Patterns</label>
+                <div class="row-actions" style="margin-top:8px;">
+                    <button class="btn secondary" type="button" onclick="setSessionPreset('all')">Every Weekday</button>
+                    <button class="btn secondary" type="button" onclick="setSessionPreset('mon')">Monday Only</button>
+                    <button class="btn secondary" type="button" onclick="setSessionPreset('tuethu')">Tuesday &amp; Thursday</button>
+                    <button class="btn secondary" type="button" onclick="setSessionPreset('mwf')">Mon / Wed / Fri</button>
+                </div>
+            </div>
+
+            <div style="margin-top:16px;">
+                <label class="field-label">Session Days</label>
+                <div class="daypicker" id="sessionDayPicker">
+                    <label class="daychip checked"><input type="checkbox" value="1" checked onchange="onSessionDayChipToggle(this)"> Mon</label>
+                    <label class="daychip checked"><input type="checkbox" value="2" checked onchange="onSessionDayChipToggle(this)"> Tue</label>
+                    <label class="daychip checked"><input type="checkbox" value="3" checked onchange="onSessionDayChipToggle(this)"> Wed</label>
+                    <label class="daychip checked"><input type="checkbox" value="4" checked onchange="onSessionDayChipToggle(this)"> Thu</label>
+                    <label class="daychip checked"><input type="checkbox" value="5" checked onchange="onSessionDayChipToggle(this)"> Fri</label>
+                </div>
+            </div>
+
+            <div class="row-actions">
+                <button class="btn" type="button" onclick="generateSessionPlan()">Generate Session Dates</button>
+                <button class="btn secondary" type="button" onclick="downloadPDF()">Download Full Plan as PDF</button>
+            </div>
+
+            <div id="sessionPlanArea" style="margin-top:18px;">
+                <div class="empty">Calculate the roll-out plan above, choose a pattern, then click "Generate Session Dates".</div>
+            </div>
+        </section>
+    </main>
+
+    <footer>
+        <ul>
+            <a href="privacy.html"><li>Privacy Policy</li></a>
+        </ul>
+        <p>HospiTrack Information Systems &copy; 2026</p>
+    </footer>
+    <script src="{{ url_for('static', filename='js/create.js') }}"></script>
+    <script src="{{ url_for('static', filename='js/rollout.js') }}"></script>
 </body>
 </html>
