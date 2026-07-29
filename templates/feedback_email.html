@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="font-family: Arial, Helvetica, sans-serif; color:#37352F; font-size:14px; line-height:1.6; margin:0; padding:24px;">
+  <h2 style="margin:0 0 4px;">New Feedback — Nkanyezi Roll-out Plan Builder</h2>
+  <p style="color:#787774; margin:0 0 20px;">Submitted via the HospiTrack feedback form.</p>
+
+  <table cellpadding="8" cellspacing="0" style="border-collapse:collapse; width:100%; max-width:520px; border:1px solid #E9E9E7;">
+    <tr>
+      <td style="color:#787774; width:170px; border-bottom:1px solid #E9E9E7; vertical-align:top;">Would recommend?</td>
+      <td style="border-bottom:1px solid #E9E9E7;">{{ recommend or 'Not answered' }}</td>
+    </tr>
+    <tr>
+      <td style="color:#787774; border-bottom:1px solid #E9E9E7; vertical-align:top;">Satisfaction rating</td>
+      <td style="border-bottom:1px solid #E9E9E7;">{{ rating or 'Not answered' }}</td>
+    </tr>
+    <tr>
+      <td style="color:#787774; border-bottom:1px solid #E9E9E7; vertical-align:top;">Suggestions</td>
+      <td style="border-bottom:1px solid #E9E9E7; white-space:pre-wrap;">{{ suggestions or '\u2014' }}</td>
+    </tr>
+    <tr>
+      <td style="color:#787774; border-bottom:1px solid #E9E9E7; vertical-align:top;">Name</td>
+      <td style="border-bottom:1px solid #E9E9E7;">{{ full_name }}</td>
+    </tr>
+    <tr>
+      <td style="color:#787774; vertical-align:top;">Email</td>
+      <td>{{ email or '\u2014' }}</td>
+    </tr>
+  </table>
+
+  <p style="color:#ACABA8; font-size:12px; margin-top:20px;">
+    {% if email %}Reply directly to this email to respond to {{ full_name }}.{% endif %}
+  </p>
+</body>
+</html>
