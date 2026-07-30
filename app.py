@@ -171,7 +171,10 @@ def export_pdf():
             "error": "An unexpected error occurred while generating the PDF.",
             "detail": str(exc)
         }), 500
-
+        
+@app.route("/privacy")
+def privacy():
+    return render_template("privacy.html")
 
 if __name__ == "__main__":
     app.run()
