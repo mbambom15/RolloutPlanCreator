@@ -183,15 +183,23 @@ function computeSchedule(){
   if(!startInput){ alert('Please set a programme start date.'); return; }
 
   const rawStart = parseISO(startInput);
-  const inductionDate = inductionInput ? parseISO(inductionInput) : null;
-  if(inductionDate && inductionDate > rawStart){
-    alert('Heads up: the induction date you entered is after the programme start date — double-check those two fields.');
+  let inductionDate = null;
+  if(inductionInput){
+    inductionDate = parseISO(inductionInput);
+    if(inductionDate <= rawStart){
+      alert('Induction date must be after the programme start date. Fix this before calculating — the schedule will not be generated until it is.');
+      return;
+    }
   }
+  // Counting begins from the induction date when one's given (it must be
+  // after the start date, enforced above); otherwise from the start date
+  // itself. The exam deadline is still fixed off the original start date.
+  const countingStart = inductionDate || rawStart;
 
   const daySet = new Set([1,2,3,4,5]);
   const examDate = twelveMonthExamDate(rawStart);
   const holidayMap = buildHolidayMap(rawStart.getFullYear() - 1, examDate.getFullYear() + 1);
-  const start = nextContactDay(rawStart, holidayMap, daySet);
+  const start = nextContactDay(countingStart, holidayMap, daySet);
 
   const rows = document.querySelectorAll('#moduleBody tr');
   if(rows.length === 0){ alert('Add at least one module first.'); return; }
@@ -307,7 +315,7 @@ function renderSummary(sum){
       </div>
       <div class="summary-cell">
         <div class="label">Programme Start</div>
-        <div class="value" style="font-size:16px;">${fmt(sum.start)}</div>
+        <div class="value" style="font-size:16px;">${fmt(sum.rawStart)}</div>
       </div>
       <div class="summary-cell">
         <div class="label">Programme End (Exam Deadline)</div>
