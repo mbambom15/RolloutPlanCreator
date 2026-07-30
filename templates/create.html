@@ -138,16 +138,10 @@
 
             <div style="margin-top:16px;">
                 <label class="field-label">Recurrence</label>
-                <div class="row-actions" style="margin-top:8px;">
-                    <label style="display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text); cursor:pointer;">
-                        <input type="radio" name="recurrenceType" value="weekly" checked onchange="onRecurrenceTypeChange()"> Weekly
-                    </label>
-                    <label style="display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text); cursor:pointer;">
-                        <input type="radio" name="recurrenceType" value="biweekly" onchange="onRecurrenceTypeChange()"> Bi-weekly (choose weeks of month)
-                    </label>
-                    <label style="display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text); cursor:pointer;">
-                        <input type="radio" name="recurrenceType" value="monthly" onchange="onRecurrenceTypeChange()"> Monthly
-                    </label>
+                <div class="daypicker" id="recurrenceTypePicker">
+                    <label class="daychip checked"><input type="radio" name="recurrenceType" value="weekly" checked onchange="onRadioDayToggle(this); onRecurrenceTypeChange();"> Weekly</label>
+                    <label class="daychip"><input type="radio" name="recurrenceType" value="biweekly" onchange="onRadioDayToggle(this); onRecurrenceTypeChange();"> Bi-weekly</label>
+                    <label class="daychip"><input type="radio" name="recurrenceType" value="monthly" onchange="onRadioDayToggle(this); onRecurrenceTypeChange();"> Monthly</label>
                 </div>
             </div>
 
@@ -204,14 +198,14 @@
                     <label class="daychip"><input type="radio" name="monthlyDay" value="4" onchange="onRadioDayToggle(this)"> Thu</label>
                     <label class="daychip"><input type="radio" name="monthlyDay" value="5" onchange="onRadioDayToggle(this)"> Fri</label>
                 </div>
-                <div style="margin-top:12px; max-width:220px;">
-                    <label class="field-label" for="monthlyWeekSelect">Which week of the month</label>
-                    <select id="monthlyWeekSelect">
-                        <option value="1">1st</option>
-                        <option value="2">2nd</option>
-                        <option value="3">3rd</option>
-                        <option value="4">4th</option>
-                    </select>
+                <div style="margin-top:12px;">
+                    <label class="field-label">Which Week of the Month</label>
+                    <div class="daypicker" id="monthlyWeekPicker">
+                        <label class="daychip checked"><input type="radio" name="monthlyWeek" value="1" checked onchange="onRadioDayToggle(this)"> 1st</label>
+                        <label class="daychip"><input type="radio" name="monthlyWeek" value="2" onchange="onRadioDayToggle(this)"> 2nd</label>
+                        <label class="daychip"><input type="radio" name="monthlyWeek" value="3" onchange="onRadioDayToggle(this)"> 3rd</label>
+                        <label class="daychip"><input type="radio" name="monthlyWeek" value="4" onchange="onRadioDayToggle(this)"> 4th</label>
+                    </div>
                 </div>
                 <div class="callout" style="margin-top:10px;">One session per month, on the selected occurrence of the selected weekday (e.g. the 2nd Wednesday of every month).</div>
             </div>

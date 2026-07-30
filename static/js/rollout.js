@@ -472,7 +472,7 @@ function generateSessionPlan(){
     const dayVal = document.querySelector('input[name="monthlyDay"]:checked')?.value;
     if(!dayVal){ alert('Select a day for the monthly pattern.'); return; }
     const weekday = parseInt(dayVal, 10);
-    const weekOfMonth = parseInt(document.getElementById('monthlyWeekSelect')?.value || '1', 10);
+    const weekOfMonth = parseInt(document.querySelector('input[name="monthlyWeek"]:checked')?.value || '1', 10);
     results = lastSchedule.map(mod => ({
       name: mod.name,
       moduleStart: mod.moduleStart,
