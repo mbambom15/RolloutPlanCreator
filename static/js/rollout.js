@@ -518,17 +518,13 @@ function renderSessionPlan(results){
   area.innerHTML = html || '<div class="empty">No sessions generated — check that the roll-out plan has allocated date ranges.</div>';
 }
 
-// ---------- PDF export ----------
-async function downloadPDF(){
-  if(!lastSchedule){
-    alert('Calculate the roll-out plan first — the PDF is built from the computed schedule.');
-    return;
-  }
+// ---------- Export payload (shared by PDF and Excel) ----------
+function buildExportPayload(){
   const cohortName = document.getElementById('cohortName').value.trim();
   const inductionInput = document.getElementById('inductionDate')?.value || '';
   const startInput = document.getElementById('startDate').value;
 
-  const payload = {
+  return {
     cohortName,
     inductionDate: inductionInput ? fmtDateOnly(parseISO(inductionInput)) : null,
     startDate: startInput ? fmtDateOnly(parseISO(startInput)) : null,
@@ -550,6 +546,25 @@ async function downloadPDF(){
       rows: r.sessions.map((s,i) => ({ n: i+1, date: fmtDateOnly(s), day: s.toLocaleDateString('en-ZA',{weekday:'long'}) }))
     }))
   };
+}
+function triggerBlobDownload(blob, cohortName, extension){
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = (cohortName || 'rollout-plan').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') + '.' + extension;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+// ---------- PDF export ----------
+async function downloadPDF(){
+  if(!lastSchedule){
+    alert('Calculate the roll-out plan first — the PDF is built from the computed schedule.');
+    return;
+  }
+  const payload = buildExportPayload();
 
   try {
     const resp = await fetch('/export/pdf', {
@@ -563,16 +578,35 @@ async function downloadPDF(){
       return;
     }
     const blob = await resp.blob();
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = (cohortName || 'rollout-plan').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/(^-|-$)/g,'') + '.pdf';
-    document.body.appendChild(a);
-    a.click();
-    a.remove();
-    URL.revokeObjectURL(url);
+    triggerBlobDownload(blob, payload.cohortName, 'pdf');
   } catch(err){
     alert('Could not reach the server to generate the PDF: ' + err.message);
+  }
+}
+
+// ---------- Excel export ----------
+async function downloadExcel(){
+  if(!lastSchedule){
+    alert('Calculate the roll-out plan first — the Excel file is built from the computed schedule.');
+    return;
+  }
+  const payload = buildExportPayload();
+
+  try {
+    const resp = await fetch('/export/xlsx', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if(!resp.ok){
+      const err = await resp.json().catch(() => ({}));
+      alert(err.error || 'Could not generate the Excel file (server error).');
+      return;
+    }
+    const blob = await resp.blob();
+    triggerBlobDownload(blob, payload.cohortName, 'xlsx');
+  } catch(err){
+    alert('Could not reach the server to generate the Excel file: ' + err.message);
   }
 }
 

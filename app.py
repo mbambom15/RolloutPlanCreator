@@ -7,6 +7,8 @@ from flask import Flask, render_template, request, Response, jsonify
 from xhtml2pdf import pisa
 import resend
 
+from excel_export import build_workbook
+
 load_dotenv()  # reads .env locally; in production, set real env vars instead
 
 app = Flask(__name__)
@@ -171,10 +173,61 @@ def export_pdf():
             "error": "An unexpected error occurred while generating the PDF.",
             "detail": str(exc)
         }), 500
-        
+
+
+@app.route("/export/xlsx", methods=["POST"])
+def export_xlsx():
+    """
+    Exports the rollout plan and optional session plan as an .xlsx
+    workbook, styled to match the real SETA roll-out plan templates
+    (navy header row, merged Module column, wide wrapped Component
+    column). Two distinct sheets: the computed schedule (named after
+    the cohort) and the session plan — kept structurally separate.
+
+    Like /export/pdf, this route does NOT recompute the schedule — it
+    formats whatever the frontend already calculated.
+    """
+    try:
+        data = request.get_json(silent=True) or {}
+
+        cohort_name = (data.get("cohortName") or "Roll-out Plan").strip()
+        induction_date = data.get("inductionDate")
+        start_date = data.get("startDate")
+        exam_date = data.get("examDate")
+        modules = data.get("modules") or []
+        sessions = data.get("sessions") or []
+
+        xlsx_bytes = build_workbook(
+            cohort_name, induction_date, start_date, exam_date, modules, sessions
+        )
+
+        safe_name = "".join(
+            c if c.isalnum() else "-"
+            for c in cohort_name.lower()
+        ).strip("-")
+        if not safe_name:
+            safe_name = "rollout-plan"
+
+        return Response(
+            xlsx_bytes,
+            mimetype="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            headers={
+                "Content-Disposition":
+                    f'attachment; filename="{safe_name}.xlsx"'
+            }
+        )
+
+    except Exception as exc:
+        return jsonify({
+            "error": "An unexpected error occurred while generating the Excel file.",
+            "detail": str(exc)
+        }), 500
+
+
 @app.route("/privacy")
 def privacy():
     return render_template("privacy.html")
+
 
 if __name__ == "__main__":
     app.run()
