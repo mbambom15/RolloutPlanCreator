@@ -363,6 +363,9 @@ function onRadioDayToggle(radio){
 function onSessionDayChipToggle(checkbox){
   checkbox.closest('.daychip').classList.toggle('checked', checkbox.checked);
 }
+function onSessionWeekChipToggle(checkbox){
+  checkbox.closest('.daychip').classList.toggle('checked', checkbox.checked);
+}
 function getSessionDaySet(){
   const boxes = document.querySelectorAll('#sessionDayPicker input[type=checkbox]');
   const set = new Set();
@@ -397,28 +400,6 @@ function generateSessionsInRange(start, end, holidayMap, daySet){
   }
   return sessions;
 }
-// Bi-weekly: a single weekday, every 14 days starting from its first
-// occurrence on/after the range start. An occurrence that lands on a
-// holiday or inside the December break is skipped (not shifted) —
-// the next one 14 days later is still on-cadence.
-function generateBiweeklySessions(start, end, holidayMap, weekday){
-  const sessions = [];
-  if(!start || !end) return sessions;
-  let d = new Date(start);
-  let guard = 0;
-  while(d.getDay() !== weekday){
-    d.setDate(d.getDate()+1);
-    guard++;
-    if(guard > 7) break; // safety valve, should never trigger
-  }
-  while(d <= end){
-    if(!isDecemberBreak(d) && !holidayMap.has(isoKey(d))){
-      sessions.push(new Date(d));
-    }
-    d.setDate(d.getDate()+14);
-  }
-  return sessions;
-}
 // The Nth (1-4) occurrence of `weekday` (0=Sun..6=Sat) in a given month/year.
 function nthWeekdayOfMonth(year, month, weekday, n){
   const first = new Date(year, month, 1);
@@ -426,23 +407,29 @@ function nthWeekdayOfMonth(year, month, weekday, n){
   const day = 1 + ((7 + weekday - firstWeekday) % 7) + (n - 1) * 7;
   return new Date(year, month, day);
 }
-// Monthly: one session per month, on the Nth occurrence of a chosen
-// weekday (e.g. "the 2nd Wednesday of every month"). A month whose
-// occurrence falls on a holiday or inside the December break is
-// skipped entirely for that month rather than shifted to another day.
-function generateMonthlySessions(start, end, holidayMap, weekday, weekOfMonth){
+// Unified generator for both Bi-weekly and Monthly patterns: one session
+// per selected week-of-month (weeksOfMonth can be any combination of
+// 1-4, e.g. {1,3} for "1st and 3rd week" = 2 sessions/month, or a single
+// value for Monthly's "once a month"), on the chosen weekday, repeated
+// every month across the module's date range. An occurrence that lands
+// on a holiday or inside the December break is skipped for that month
+// only — the pattern still applies every other month.
+function generateWeekOfMonthSessions(start, end, holidayMap, weekday, weeksOfMonth){
   const sessions = [];
-  if(!start || !end) return sessions;
+  if(!start || !end || !weeksOfMonth || weeksOfMonth.size === 0) return sessions;
   let y = start.getFullYear();
   let m = start.getMonth();
   const endY = end.getFullYear();
   const endM = end.getMonth();
+  const weeks = Array.from(weeksOfMonth).sort((a,b) => a - b);
   let guard = 0;
   while(y < endY || (y === endY && m <= endM)){
-    const occurrence = nthWeekdayOfMonth(y, m, weekday, weekOfMonth);
-    if(occurrence >= start && occurrence <= end && !isDecemberBreak(occurrence) && !holidayMap.has(isoKey(occurrence))){
-      sessions.push(occurrence);
-    }
+    weeks.forEach(wk => {
+      const occurrence = nthWeekdayOfMonth(y, m, weekday, wk);
+      if(occurrence >= start && occurrence <= end && !isDecemberBreak(occurrence) && !holidayMap.has(isoKey(occurrence))){
+        sessions.push(occurrence);
+      }
+    });
     m++;
     if(m > 11){ m = 0; y++; }
     guard++;
@@ -464,11 +451,14 @@ function generateSessionPlan(){
     const dayVal = document.querySelector('input[name="biweeklyDay"]:checked')?.value;
     if(!dayVal){ alert('Select a day for the bi-weekly pattern.'); return; }
     const weekday = parseInt(dayVal, 10);
+    const weeksOfMonth = new Set();
+    document.querySelectorAll('#biweeklyWeekPicker input[type=checkbox]:checked').forEach(b => weeksOfMonth.add(parseInt(b.value, 10)));
+    if(weeksOfMonth.size === 0){ alert('Select at least one week of the month for the bi-weekly pattern (e.g. Week 1 and Week 3).'); return; }
     results = lastSchedule.map(mod => ({
       name: mod.name,
       moduleStart: mod.moduleStart,
       moduleEnd: mod.moduleEnd,
-      sessions: generateBiweeklySessions(mod.moduleStart, mod.moduleEnd, lastHolidayMap, weekday)
+      sessions: generateWeekOfMonthSessions(mod.moduleStart, mod.moduleEnd, lastHolidayMap, weekday, weeksOfMonth)
     }));
   } else if(recurrenceType === 'monthly'){
     const dayVal = document.querySelector('input[name="monthlyDay"]:checked')?.value;
@@ -479,7 +469,7 @@ function generateSessionPlan(){
       name: mod.name,
       moduleStart: mod.moduleStart,
       moduleEnd: mod.moduleEnd,
-      sessions: generateMonthlySessions(mod.moduleStart, mod.moduleEnd, lastHolidayMap, weekday, weekOfMonth)
+      sessions: generateWeekOfMonthSessions(mod.moduleStart, mod.moduleEnd, lastHolidayMap, weekday, new Set([weekOfMonth]))
     }));
   } else {
     const daySet = getSessionDaySet();

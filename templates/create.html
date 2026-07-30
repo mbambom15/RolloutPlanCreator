@@ -15,7 +15,7 @@
             <nav id="navbar">
                 <ul>
                     <a href="#"><li>LMS</li></a>
-                    <a href="{{ url_for('home') }}#feedback"><li>Feedback</li></a>
+                    <a href="#feedback"><li>Feedback</li></a>
                 </ul>
             </nav>
         </div>
@@ -67,6 +67,10 @@
                     <div class="sub-field">
                         <label class="field-label" for="cohortName">Cohort / Deal Name</label>
                         <input type="text" id="cohortName" placeholder="e.g. Frangipani Software Engineer SE6">
+                    </div>
+                    <div class="sub-field">
+                        <label class="field-label" for="inductionDate">Induction Date (optional)</label>
+                        <input type="date" id="inductionDate">
                     </div>
                     <div class="sub-field">
                         <label class="field-label" for="startDate">Programme Start Date</label>
@@ -133,24 +137,83 @@
             </div>
 
             <div style="margin-top:16px;">
-                <label class="field-label">Quick Patterns</label>
+                <label class="field-label">Recurrence</label>
                 <div class="row-actions" style="margin-top:8px;">
-                    <button class="btn secondary" type="button" onclick="setSessionPreset('all')">Every Weekday</button>
-                    <button class="btn secondary" type="button" onclick="setSessionPreset('mon')">Monday Only</button>
-                    <button class="btn secondary" type="button" onclick="setSessionPreset('tuethu')">Tuesday &amp; Thursday</button>
-                    <button class="btn secondary" type="button" onclick="setSessionPreset('mwf')">Mon / Wed / Fri</button>
+                    <label style="display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text); cursor:pointer;">
+                        <input type="radio" name="recurrenceType" value="weekly" checked onchange="onRecurrenceTypeChange()"> Weekly
+                    </label>
+                    <label style="display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text); cursor:pointer;">
+                        <input type="radio" name="recurrenceType" value="biweekly" onchange="onRecurrenceTypeChange()"> Bi-weekly (choose weeks of month)
+                    </label>
+                    <label style="display:inline-flex; align-items:center; gap:6px; font-size:13px; color:var(--text); cursor:pointer;">
+                        <input type="radio" name="recurrenceType" value="monthly" onchange="onRecurrenceTypeChange()"> Monthly
+                    </label>
                 </div>
             </div>
 
-            <div style="margin-top:16px;">
-                <label class="field-label">Session Days</label>
-                <div class="daypicker" id="sessionDayPicker">
-                    <label class="daychip checked"><input type="checkbox" value="1" checked onchange="onSessionDayChipToggle(this)"> Mon</label>
-                    <label class="daychip checked"><input type="checkbox" value="2" checked onchange="onSessionDayChipToggle(this)"> Tue</label>
-                    <label class="daychip checked"><input type="checkbox" value="3" checked onchange="onSessionDayChipToggle(this)"> Wed</label>
-                    <label class="daychip checked"><input type="checkbox" value="4" checked onchange="onSessionDayChipToggle(this)"> Thu</label>
-                    <label class="daychip checked"><input type="checkbox" value="5" checked onchange="onSessionDayChipToggle(this)"> Fri</label>
+            <div id="weeklyOptions" style="display:block;">
+                <div style="margin-top:16px;">
+                    <label class="field-label">Quick Patterns</label>
+                    <div class="row-actions" style="margin-top:8px;">
+                        <button class="btn secondary" type="button" onclick="setSessionPreset('all')">Every Weekday</button>
+                        <button class="btn secondary" type="button" onclick="setSessionPreset('mon')">Monday Only</button>
+                        <button class="btn secondary" type="button" onclick="setSessionPreset('tuethu')">Tuesday &amp; Thursday</button>
+                        <button class="btn secondary" type="button" onclick="setSessionPreset('mwf')">Mon / Wed / Fri</button>
+                    </div>
                 </div>
+
+                <div style="margin-top:16px;">
+                    <label class="field-label">Session Days</label>
+                    <div class="daypicker" id="sessionDayPicker">
+                        <label class="daychip checked"><input type="checkbox" value="1" checked onchange="onSessionDayChipToggle(this)"> Mon</label>
+                        <label class="daychip checked"><input type="checkbox" value="2" checked onchange="onSessionDayChipToggle(this)"> Tue</label>
+                        <label class="daychip checked"><input type="checkbox" value="3" checked onchange="onSessionDayChipToggle(this)"> Wed</label>
+                        <label class="daychip checked"><input type="checkbox" value="4" checked onchange="onSessionDayChipToggle(this)"> Thu</label>
+                        <label class="daychip checked"><input type="checkbox" value="5" checked onchange="onSessionDayChipToggle(this)"> Fri</label>
+                    </div>
+                </div>
+            </div>
+
+            <div id="biweeklyOptions" style="display:none; margin-top:16px;">
+                <label class="field-label">Day</label>
+                <div class="daypicker" id="biweeklyDayPicker">
+                    <label class="daychip"><input type="radio" name="biweeklyDay" value="1" onchange="onRadioDayToggle(this)"> Mon</label>
+                    <label class="daychip"><input type="radio" name="biweeklyDay" value="2" onchange="onRadioDayToggle(this)"> Tue</label>
+                    <label class="daychip"><input type="radio" name="biweeklyDay" value="3" onchange="onRadioDayToggle(this)"> Wed</label>
+                    <label class="daychip"><input type="radio" name="biweeklyDay" value="4" onchange="onRadioDayToggle(this)"> Thu</label>
+                    <label class="daychip"><input type="radio" name="biweeklyDay" value="5" onchange="onRadioDayToggle(this)"> Fri</label>
+                </div>
+                <div style="margin-top:12px;">
+                    <label class="field-label">Week(s) of the Month</label>
+                    <div class="daypicker" id="biweeklyWeekPicker">
+                        <label class="daychip"><input type="checkbox" value="1" onchange="onSessionWeekChipToggle(this)"> Week 1</label>
+                        <label class="daychip"><input type="checkbox" value="2" onchange="onSessionWeekChipToggle(this)"> Week 2</label>
+                        <label class="daychip"><input type="checkbox" value="3" onchange="onSessionWeekChipToggle(this)"> Week 3</label>
+                        <label class="daychip"><input type="checkbox" value="4" onchange="onSessionWeekChipToggle(this)"> Week 4</label>
+                    </div>
+                </div>
+                <div class="callout" style="margin-top:10px;">Pick any combination of weeks — e.g. Week 1 &amp; Week 3 for two sessions a month on the chosen day. This repeats every month across the module's date range.</div>
+            </div>
+
+            <div id="monthlyOptions" style="display:none; margin-top:16px;">
+                <label class="field-label">Day (once a month)</label>
+                <div class="daypicker" id="monthlyDayPicker">
+                    <label class="daychip"><input type="radio" name="monthlyDay" value="1" onchange="onRadioDayToggle(this)"> Mon</label>
+                    <label class="daychip"><input type="radio" name="monthlyDay" value="2" onchange="onRadioDayToggle(this)"> Tue</label>
+                    <label class="daychip"><input type="radio" name="monthlyDay" value="3" onchange="onRadioDayToggle(this)"> Wed</label>
+                    <label class="daychip"><input type="radio" name="monthlyDay" value="4" onchange="onRadioDayToggle(this)"> Thu</label>
+                    <label class="daychip"><input type="radio" name="monthlyDay" value="5" onchange="onRadioDayToggle(this)"> Fri</label>
+                </div>
+                <div style="margin-top:12px; max-width:220px;">
+                    <label class="field-label" for="monthlyWeekSelect">Which week of the month</label>
+                    <select id="monthlyWeekSelect">
+                        <option value="1">1st</option>
+                        <option value="2">2nd</option>
+                        <option value="3">3rd</option>
+                        <option value="4">4th</option>
+                    </select>
+                </div>
+                <div class="callout" style="margin-top:10px;">One session per month, on the selected occurrence of the selected weekday (e.g. the 2nd Wednesday of every month).</div>
             </div>
 
             <div class="row-actions">
@@ -166,7 +229,7 @@
 
     <footer>
         <ul>
-            <a href="{{ url_for('privacy') }}"><li>Privacy Policy</li></a>
+            <a href="privacy.html"><li>Privacy Policy</li></a>
         </ul>
         <p>HospiTrack Information Systems &copy; 2026</p>
     </footer>
