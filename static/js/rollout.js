@@ -341,6 +341,25 @@ function renderSummary(sum){
 }
 
 // ---------- Stage 2: Session Planner ----------
+function getRecurrenceType(){
+  return document.querySelector('input[name="recurrenceType"]:checked')?.value || 'weekly';
+}
+function onRecurrenceTypeChange(){
+  const type = getRecurrenceType();
+  const weekly = document.getElementById('weeklyOptions');
+  const biweekly = document.getElementById('biweeklyOptions');
+  const monthly = document.getElementById('monthlyOptions');
+  if(weekly) weekly.style.display = type === 'weekly' ? 'block' : 'none';
+  if(biweekly) biweekly.style.display = type === 'biweekly' ? 'block' : 'none';
+  if(monthly) monthly.style.display = type === 'monthly' ? 'block' : 'none';
+}
+// Shared toggle for the single-select (radio) day chips used by bi-weekly/monthly
+function onRadioDayToggle(radio){
+  const group = radio.closest('.daypicker');
+  if(group) group.querySelectorAll('.daychip').forEach(chip => chip.classList.remove('checked'));
+  const chip = radio.closest('.daychip');
+  if(chip) chip.classList.add('checked');
+}
 function onSessionDayChipToggle(checkbox){
   checkbox.closest('.daychip').classList.toggle('checked', checkbox.checked);
 }
@@ -351,6 +370,12 @@ function getSessionDaySet(){
   return set;
 }
 function setSessionPreset(preset){
+  // Quick patterns are weekly-only — switch back to weekly mode if another is selected
+  const weeklyRadio = document.querySelector('input[name="recurrenceType"][value="weekly"]');
+  if(weeklyRadio && !weeklyRadio.checked){
+    weeklyRadio.checked = true;
+    onRecurrenceTypeChange();
+  }
   const map = { all:[1,2,3,4,5], mon:[1], tuethu:[2,4], mwf:[1,3,5] };
   const selected = new Set(map[preset] || []);
   document.querySelectorAll('#sessionDayPicker input[type=checkbox]').forEach(b => {
@@ -358,6 +383,8 @@ function setSessionPreset(preset){
     b.closest('.daychip').classList.toggle('checked', b.checked);
   });
 }
+
+// Weekly: every occurrence of the selected weekday(s) within the range.
 function generateSessionsInRange(start, end, holidayMap, daySet){
   const sessions = [];
   if(!start || !end) return sessions;
@@ -370,20 +397,101 @@ function generateSessionsInRange(start, end, holidayMap, daySet){
   }
   return sessions;
 }
+// Bi-weekly: a single weekday, every 14 days starting from its first
+// occurrence on/after the range start. An occurrence that lands on a
+// holiday or inside the December break is skipped (not shifted) —
+// the next one 14 days later is still on-cadence.
+function generateBiweeklySessions(start, end, holidayMap, weekday){
+  const sessions = [];
+  if(!start || !end) return sessions;
+  let d = new Date(start);
+  let guard = 0;
+  while(d.getDay() !== weekday){
+    d.setDate(d.getDate()+1);
+    guard++;
+    if(guard > 7) break; // safety valve, should never trigger
+  }
+  while(d <= end){
+    if(!isDecemberBreak(d) && !holidayMap.has(isoKey(d))){
+      sessions.push(new Date(d));
+    }
+    d.setDate(d.getDate()+14);
+  }
+  return sessions;
+}
+// The Nth (1-4) occurrence of `weekday` (0=Sun..6=Sat) in a given month/year.
+function nthWeekdayOfMonth(year, month, weekday, n){
+  const first = new Date(year, month, 1);
+  const firstWeekday = first.getDay();
+  const day = 1 + ((7 + weekday - firstWeekday) % 7) + (n - 1) * 7;
+  return new Date(year, month, day);
+}
+// Monthly: one session per month, on the Nth occurrence of a chosen
+// weekday (e.g. "the 2nd Wednesday of every month"). A month whose
+// occurrence falls on a holiday or inside the December break is
+// skipped entirely for that month rather than shifted to another day.
+function generateMonthlySessions(start, end, holidayMap, weekday, weekOfMonth){
+  const sessions = [];
+  if(!start || !end) return sessions;
+  let y = start.getFullYear();
+  let m = start.getMonth();
+  const endY = end.getFullYear();
+  const endM = end.getMonth();
+  let guard = 0;
+  while(y < endY || (y === endY && m <= endM)){
+    const occurrence = nthWeekdayOfMonth(y, m, weekday, weekOfMonth);
+    if(occurrence >= start && occurrence <= end && !isDecemberBreak(occurrence) && !holidayMap.has(isoKey(occurrence))){
+      sessions.push(occurrence);
+    }
+    m++;
+    if(m > 11){ m = 0; y++; }
+    guard++;
+    if(guard > 600) break; // safety valve against a runaway range
+  }
+  return sessions;
+}
+
 function generateSessionPlan(){
   if(!lastSchedule || !lastHolidayMap){
     alert('Calculate the roll-out plan above first — the session planner schedules within the date ranges it produces.');
     return;
   }
-  const daySet = getSessionDaySet();
-  if(daySet.size === 0){ alert('Select at least one session day.'); return; }
 
-  const results = lastSchedule.map(mod => ({
-    name: mod.name,
-    moduleStart: mod.moduleStart,
-    moduleEnd: mod.moduleEnd,
-    sessions: generateSessionsInRange(mod.moduleStart, mod.moduleEnd, lastHolidayMap, daySet)
-  }));
+  const recurrenceType = getRecurrenceType();
+  let results;
+
+  if(recurrenceType === 'biweekly'){
+    const dayVal = document.querySelector('input[name="biweeklyDay"]:checked')?.value;
+    if(!dayVal){ alert('Select a day for the bi-weekly pattern.'); return; }
+    const weekday = parseInt(dayVal, 10);
+    results = lastSchedule.map(mod => ({
+      name: mod.name,
+      moduleStart: mod.moduleStart,
+      moduleEnd: mod.moduleEnd,
+      sessions: generateBiweeklySessions(mod.moduleStart, mod.moduleEnd, lastHolidayMap, weekday)
+    }));
+  } else if(recurrenceType === 'monthly'){
+    const dayVal = document.querySelector('input[name="monthlyDay"]:checked')?.value;
+    if(!dayVal){ alert('Select a day for the monthly pattern.'); return; }
+    const weekday = parseInt(dayVal, 10);
+    const weekOfMonth = parseInt(document.getElementById('monthlyWeekSelect')?.value || '1', 10);
+    results = lastSchedule.map(mod => ({
+      name: mod.name,
+      moduleStart: mod.moduleStart,
+      moduleEnd: mod.moduleEnd,
+      sessions: generateMonthlySessions(mod.moduleStart, mod.moduleEnd, lastHolidayMap, weekday, weekOfMonth)
+    }));
+  } else {
+    const daySet = getSessionDaySet();
+    if(daySet.size === 0){ alert('Select at least one session day.'); return; }
+    results = lastSchedule.map(mod => ({
+      name: mod.name,
+      moduleStart: mod.moduleStart,
+      moduleEnd: mod.moduleEnd,
+      sessions: generateSessionsInRange(mod.moduleStart, mod.moduleEnd, lastHolidayMap, daySet)
+    }));
+  }
+
   lastSessionResults = results;
   renderSessionPlan(results);
 }
@@ -471,21 +579,53 @@ async function downloadPDF(){
 }
 
 // ---------- Upload / parse existing plan ----------
+function colLetter(idx){
+  let s = '';
+  let n = idx + 1;
+  while(n > 0){
+    const rem = (n - 1) % 26;
+    s = String.fromCharCode(65 + rem) + s;
+    n = Math.floor((n - 1) / 26);
+  }
+  return s;
+}
+// Strips non-breaking spaces, collapses runs of whitespace, trims, lowercases —
+// so "TITLE  OF\u00a0UNIT STANDARDS" and "Title of Unit Standards" both match
+// the same keyword checks regardless of stray spacing in the source file.
+function normHeader(s){
+  return String(s).replace(/\u00a0/g, ' ').replace(/\s+/g, ' ').trim().toLowerCase();
+}
 // Scans a sheet's first few rows for a header containing a "credit" column,
 // plus — separately — a "module" (grouping) column and a "unit standard"
-// (line-item) column where present. Real roll-out plans typically have
-// the Module cell merged/blank on every row after a unit standard's first,
-// so this forward-fills the last-seen module name down through its rows.
-function parseSheetForModules(rows, moduleMap){
+// (line-item) column where present. Real roll-out plans typically have the
+// Module cell merged/blank on every row after a unit standard's first, so
+// this forward-fills the last-seen module name down through its rows.
+//
+// Pushes ONE ROW PER UNIT STANDARD into `outRows`, each keeping its own
+// individual credit value straight from the CREDITS column (not summed
+// under its parent module) — the module name is kept only as naming
+// context, e.g. "Communication and Ethics: Business Writing".
+function parseSheetForModules(rows, outRows){
   let headerRowIdx = -1, creditColIdx = -1, moduleColIdx = -1, usColIdx = -1;
 
   for(let r = 0; r < Math.min(6, rows.length); r++){
-    const row = rows[r].map(c => String(c).toLowerCase().trim());
+    const row = rows[r].map(normHeader);
     const cIdx = row.findIndex(c => c.includes('credit'));
     if(cIdx === -1) continue;
 
     const mIdx = row.findIndex(c => c.includes('module') || c.includes('grouping'));
-    let uIdx = row.findIndex(c => c.includes('unit standard'));
+
+    // Broadened net: catches "Title of Unit Standards", "US Title",
+    // "US Description", "Standard Title", "Standard Description",
+    // "Outcome", etc. — not just the literal phrase "unit standard".
+    let uIdx = row.findIndex(c =>
+      c.includes('unit standard') ||
+      c.includes('us title') ||
+      c.includes('us description') ||
+      c.includes('standard title') ||
+      c.includes('standard description') ||
+      c.includes('outcome')
+    );
     if(uIdx === -1){
       uIdx = row.findIndex((c, idx) => idx !== mIdx && (c.includes('title') || c.includes('component') || c.includes('description')));
     }
@@ -496,7 +636,7 @@ function parseSheetForModules(rows, moduleMap){
     usColIdx = uIdx;
     break;
   }
-  if(headerRowIdx === -1) return false;
+  if(headerRowIdx === -1) return { ok: false };
 
   let currentModule = null;
   for(let r = headerRowIdx + 1; r < rows.length; r++){
@@ -518,16 +658,22 @@ function parseSheetForModules(rows, moduleMap){
     else if(currentModule) moduleName = currentModule; // forward-fill a merged/blank module cell
 
     const usName = usColIdx !== -1 ? String(row[usColIdx] || '').trim() : '';
-    // Group by module when we found a real module column; otherwise each
-    // unit standard (or row) stands alone as its own module.
-    const groupKey = (moduleColIdx !== -1 && moduleName) ? moduleName : (usName || `Row ${r + 1}`);
 
-    if(!moduleMap.has(groupKey)) moduleMap.set(groupKey, { credits: 0, unitStandards: [] });
-    const entry = moduleMap.get(groupKey);
-    entry.credits += credit;
-    if(usName && usName !== groupKey) entry.unitStandards.push(usName);
+    let rowName;
+    if(usName && moduleName) rowName = `${moduleName}: ${usName}`;
+    else if(usName) rowName = usName;
+    else if(moduleName) rowName = moduleName;
+    else rowName = `Row ${r + 1}`;
+
+    outRows.push({ name: rowName, credits: credit });
   }
-  return true;
+
+  return {
+    ok: true,
+    moduleCol: moduleColIdx !== -1 ? colLetter(moduleColIdx) : null,
+    usCol: usColIdx !== -1 ? colLetter(usColIdx) : null,
+    creditCol: colLetter(creditColIdx),
+  };
 }
 
 function handleUpload(evt){
@@ -538,37 +684,41 @@ function handleUpload(evt){
     try{
       const data = new Uint8Array(e.target.result);
       const wb = XLSX.read(data, { type: 'array' });
-      const moduleMap = new Map();
+      const outRows = [];
+      let detection = null;
 
       wb.SheetNames.forEach(sheetName => {
         const ws = wb.Sheets[sheetName];
         const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
         if(rows.length < 2) return;
-        parseSheetForModules(rows, moduleMap);
+        const result = parseSheetForModules(rows, outRows);
+        if(result.ok && !detection) detection = { sheet: sheetName, ...result };
       });
 
-      if(moduleMap.size === 0){
-        alert('Could not automatically detect module/unit standard and credit columns in this file. You can still add modules manually below.');
+      if(outRows.length === 0){
+        alert('Could not automatically detect a credits column (and ideally a module/unit standard column) in this file. You can still add rows manually below.');
         return;
       }
 
       clearAll();
-      const summaryLines = [];
-      moduleMap.forEach((entry, name) => {
-        addModuleRow(name, entry.credits);
-        summaryLines.push(
-          entry.unitStandards.length
-            ? `${name}: ${entry.credits} credit(s) across ${entry.unitStandards.length} unit standard(s)`
-            : `${name}: ${entry.credits} credit(s)`
-        );
-      });
+      outRows.forEach(r => addModuleRow(r.name, r.credits));
 
-      alert(`Imported ${moduleMap.size} module(s):\n\n${summaryLines.join('\n')}\n\nPlease review names and credits before calculating — automatic column detection is a best guess.`);
+      let msg = `Imported ${outRows.length} unit standard row(s), each keeping its own credit value.\n\n`;
+      if(detection){
+        msg += `Detected on sheet "${detection.sheet}" — Module: column ${detection.moduleCol || 'not found'}, `
+             + `Unit Standard: column ${detection.usCol || 'not found'}, Credits: column ${detection.creditCol}.\n\n`;
+        if(!detection.usCol){
+          msg += 'Warning: no unit-standard column was detected — row names fell back to the module name or row number. Check the imported names below before calculating.\n\n';
+        }
+      }
+      msg += 'Please review names and credits before calculating — automatic column detection is a best guess.';
+      alert(msg);
     }catch(err){
       alert('Could not read that file as an Excel workbook: ' + err.message);
     }
   };
   reader.readAsArrayBuffer(file);
+
 }
 
 // init with two blank rows
